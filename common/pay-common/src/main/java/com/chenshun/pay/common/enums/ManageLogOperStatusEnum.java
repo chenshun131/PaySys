@@ -1,0 +1,108 @@
+package com.chenshun.pay.common.enums;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * User: chenshun131 <p />
+ * Time: 18/4/12 13:21 <p />
+ * Version: V1.0  <p />
+ * Description: 操作日志操作 <p />
+ */
+public enum ManageLogOperStatusEnum {
+
+    OPER_ADD("新增", 1),
+    OPER_UPDATE("修改", 2),
+    OPER_DELETE("删除", 3);
+
+    /** 枚举值 */
+    private int value;
+
+    /** 描述 */
+    private String desc;
+
+    private ManageLogOperStatusEnum(String desc, int value) {
+        this.value = value;
+        this.desc = desc;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public static ManageLogOperStatusEnum getEnum(int value) {
+        ManageLogOperStatusEnum resultEnum = null;
+        ManageLogOperStatusEnum[] enumAry = ManageLogOperStatusEnum.values();
+        for (ManageLogOperStatusEnum anEnumAry : enumAry) {
+            if (anEnumAry.getValue() == value) {
+                resultEnum = anEnumAry;
+                break;
+            }
+        }
+        return resultEnum;
+    }
+
+    public static Map<String, Map<String, Object>> toMap() {
+        ManageLogOperStatusEnum[] ary = ManageLogOperStatusEnum.values();
+        Map<String, Map<String, Object>> enumMap = new HashMap<>();
+        for (ManageLogOperStatusEnum anAry : ary) {
+            Map<String, Object> map = new HashMap<>();
+            String key = String.valueOf(getEnum(anAry.getValue()));
+            map.put("value", String.valueOf(anAry.getValue()));
+            map.put("desc", anAry.getDesc());
+            enumMap.put(key, map);
+        }
+        return enumMap;
+    }
+
+    public static List toList() {
+        ManageLogOperStatusEnum[] ary = ManageLogOperStatusEnum.values();
+        List list = new ArrayList();
+        for (ManageLogOperStatusEnum anAry : ary) {
+            Map<String, String> map = new HashMap<>();
+            map.put("value", String.valueOf(anAry.getValue()));
+            map.put("desc", anAry.getDesc());
+            list.add(map);
+        }
+        return list;
+    }
+
+    /**
+     * 取枚举的json字符串
+     *
+     * @return
+     */
+    public static String getJsonStr() {
+        ManageLogOperStatusEnum[] enums = ManageLogOperStatusEnum.values();
+        StringBuilder jsonStr = new StringBuilder("[");
+        for (ManageLogOperStatusEnum senum : enums) {
+            if (!"[".equals(jsonStr.toString())) {
+                jsonStr.append(",");
+            }
+            jsonStr.append("{id:'")
+                    .append(senum.toString())
+                    .append("',desc:'")
+                    .append(senum.getDesc())
+                    .append("',value:'")
+                    .append(senum.getValue())
+                    .append("'}");
+        }
+        jsonStr.append("]");
+        return jsonStr.toString();
+    }
+
+}

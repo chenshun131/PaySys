@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd"
+       default-autowire="byName" default-lazy-init="false">
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="testWhileIdle" value="true"/>
+        <property name="minEvictableIdleTimeMillis" value="60000"/>
+        <property name="timeBetweenEvictionRunsMillis" value="30000"/>
+        <property name="numTestsPerEvictionRun" value="-1"/>
+        <property name="maxTotal" value="8"/>
+        <property name="maxIdle" value="8"/>
+        <property name="minIdle" value="0"/>
+    </bean>
+
+    <bean id="jedisSentinelPool" class="redis.clients.jedis.JedisSentinelPool" destroy-method="destroy">
+        <constructor-arg name="masterName">
+            <value>master1</value>
+        </constructor-arg>
+        <constructor-arg name="sentinels">
+            <set value-type="java.lang.String">
+                <value>${redis.host1}</value>
+            </set>
+        </constructor-arg>
+        <constructor-arg name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+
+    <bean id="redisUtils" class="com.chenshun.pay.common.utils.cache.redis.RedisUtils">
+        <property name="jedisSentinelPool" ref="jedisSentinelPool"/>
+    </bean>
+    <!-- redis caceh config end -->
+
+    <!-- generic cache manager -->
+    <cache:annotation-driven/>
+
+    <!-- generic cache manager -->
+    <bean id="cacheManager" class="com.chenshun.pay.common.utils.cache.redis.springimpl.CacheManager">
+        <property name="caches">
+            <set>
+                <bean class="com.chenshun.pay.common.utils.cache.redis.springimpl.RedisCache" p:name="redisCache"/>
+            </set>
+        </property>
+    </bean>
+
+</beans>
